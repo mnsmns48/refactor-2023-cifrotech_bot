@@ -1,6 +1,5 @@
 from datetime import datetime, timezone, timedelta
 from typing import Any
-import pytz
 from sqlalchemy import Row, insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
