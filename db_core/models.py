@@ -1,4 +1,4 @@
-from sqlalchemy import Table, Column, Integer, TIMESTAMP, VARCHAR, SmallInteger, Float, Boolean, MetaData
+from sqlalchemy import Table, Column, Integer, TIMESTAMP, VARCHAR, SmallInteger, Float, Boolean, MetaData, BigInteger
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, declared_attr
 
 
@@ -31,3 +31,10 @@ activity = Table('activity', metadata,
                  Column('noncash', Boolean),
                  Column('return_', Boolean),
                  )
+
+guests = Table('guests', metadata,
+               Column('time_', TIMESTAMP(timezone=False)),
+               Column('id_', BigInteger),
+               Column('fullname', VARCHAR, nullable=True),
+               Column('username', VARCHAR, nullable=True)
+               )

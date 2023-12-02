@@ -1,14 +1,16 @@
 import asyncio
 import time
 
-from db_core.engine import AsyncScopedSession
+from db_core.engine import AsyncScopedSessionPG, AsyncScopedSessionDesc
 
-from db_core.postgres_func import get_today_activity, get_kb
-from keyboards.user_keyboards import kb_maker
+from db_core.postgres_func import get_description
 
 
 async def main():
-    await kb_maker(path='Смартфоны')
+    async with AsyncScopedSessionPG() as session_pg:
+        async with AsyncScopedSessionDesc() as session_desc:
+            d = await get_description(code='18910', session_pg=session_pg, session_desc=session_desc)
+    print(d)
 
 if __name__ == '__main__':
     asyncio.run(main())

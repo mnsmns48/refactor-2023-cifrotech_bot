@@ -1,15 +1,14 @@
 import asyncio
-import logging
 
 from config import dp, bot, commands
-from handlers.admin_handler import admin_
-from handlers.user_handler import user_, register_admin_handlers
+from handlers.admin_handler import admin_, register_admin_handlers
+from handlers.user_handler import user_, register_user_handlers
 
 
 async def main():
-    logging.basicConfig(level=logging.INFO)
     register_admin_handlers()
-    dp.include_routers(user_)
+    register_user_handlers()
+    dp.include_routers(admin_, user_)
     await bot.delete_webhook(drop_pending_updates=True)
     await bot.set_my_commands(commands)
     try:

@@ -4,7 +4,7 @@ from pydantic.v1 import BaseSettings
 from sqlalchemy import NullPool
 from sqlalchemy.ext.asyncio import (
     create_async_engine,
-    async_sessionmaker, async_scoped_session, AsyncSession,
+    async_sessionmaker, async_scoped_session
 
 )
 
@@ -25,28 +25,18 @@ class CoreConfig(BaseSettings):
 
 core_config = CoreConfig()
 
-# class LaunchDbEngine:
-#     def __init__(self, url: str, echo: bool = False):
-#         self.engine = create_async_engine(url=url, echo=echo)
-#         self.session_factory = async_sessionmaker(
-#             bind=self.engine, autoflush=False, autocommit=False, expire_on_commit=False
-#         )
-#
-#     def get_scoped_session(self):
-#         session = async_scoped_session(
-#             session_factory=self.session_factory,
-#             scopefunc=current_task,
-#         )
-#         return session
-#
-#
-# pg_engine = LaunchDbEngine(url=core_config.as_stocktable, echo=core_config.db_echo)
-
 async_engine_pg = create_async_engine(url=core_config.as_stocktable,
                                       echo=core_config.db_echo,
                                       poolclass=NullPool)
-async_session_factory = async_sessionmaker(bind=async_engine_pg,
-                                           expire_on_commit=False)
-AsyncScopedSession = async_scoped_session(session_factory=async_session_factory,
-                                          scopefunc=current_task)
+async_session_factory_pg = async_sessionmaker(bind=async_engine_pg,
+                                              expire_on_commit=False)
+AsyncScopedSessionPG = async_scoped_session(session_factory=async_session_factory_pg,
+                                            scopefunc=current_task)
 
+async_engine_desc = create_async_engine(url=core_config.phones_desc_db,
+                                        echo=core_config.db_echo,
+                                        poolclass=NullPool)
+async_session_factory_desc = async_sessionmaker(bind=async_engine_desc,
+                                                expire_on_commit=False)
+AsyncScopedSessionDesc = async_scoped_session(session_factory=async_session_factory_desc,
+                                              scopefunc=current_task)
