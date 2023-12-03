@@ -32,7 +32,7 @@ async def keyboard_maker(path: str, session_pg: AsyncSession) -> InlineKeyboardM
     if buttons_dict_.get('destination_folder'):
         builder = InlineKeyboardBuilder()
         for line in buttons_dict_.get('product_list'):
-            builder.row(InlineKeyboardButton(text=f"{line.price} {line.name.split(' ', maxsplit=1)[1]}",
+            builder.row(InlineKeyboardButton(text=f"{line.price}₽ {line.name.split(' ', maxsplit=1)[1]}",
                                              callback_data=str(line.code)
                                              )
                         )

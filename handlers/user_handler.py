@@ -38,13 +38,13 @@ async def start(m: Message):
 
 
 async def main_menu(m: Message):
-    await m.answer('Главное меню', reply_markup=main_menu_kb)
+    await m.answer('Навигация по кнопкам ❂', reply_markup=main_menu_kb)
 
 
 async def walking_dirs(m: Message):
     async with AsyncScopedSessionPG() as session_pg:
         kb = await keyboard_maker(path=str(m.text), session_pg=session_pg)
-    await m.answer(' - - - ', reply_markup=kb)
+    await m.answer('⤡', reply_markup=kb)
 
 
 async def show_product(c: CallbackQuery):
