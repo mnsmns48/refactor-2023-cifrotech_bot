@@ -29,12 +29,13 @@ async def start(m: Message):
                                 f"{m.from_user.id}",
                            disable_notification=True
                            )
-    # await m.answer_photo(photo='AgACAgIAAxkBAAIFuWQVrxkxJMuUdAUGfGAuXSt448I1AAKgxjEbYxGxSFOciZYzLCoJAQADAgADeQADLwQ',
-    #                      caption=f'Привет, {m.from_user.full_name}, этот БОТ показывает наличие и цены '
-    #                              f'в салоне мобильной связи ЦИФРОТЕХ\n\n'
-    #                              f'Телеграм канал @cifrotechmobile',
-    #                      reply_markup=main_menu_kb)
-    await m.answer(text='usermode', reply_markup=main_menu_kb)
+    await m.answer_photo(photo='AgACAgIAAxkBAAIFuWQVrxkxJMuUdAUGfGAuXSt448I1AAKgxjEbYxGxSFOciZYzLCoJAQADAgADeQADLwQ',
+                         caption=f'Привет, {m.from_user.full_name}, этот БОТ показывает наличие и цены '
+                                 f'в салоне мобильной связи ЦИФРОТЕХ\n\n'
+                                 f'Телеграм канал @cifrotechmobile\n\n'
+                                 f'Запускай приложение ↓ ↓ ↓ ↓ ↓ ↓ ',
+                         reply_markup=main_menu_kb)
+    # await m.answer(text='usermode', reply_markup=main_menu_kb)
 
 
 async def main_menu(m: Message):
@@ -61,5 +62,5 @@ async def show_product(c: CallbackQuery):
 def register_user_handlers():
     user_.callback_query.register(show_product)
     user_.message.register(start, CommandStart())
-    user_.message.register(main_menu, F.text == '- - - Главное меню - - -')
-    user_.message.register(walking_dirs)
+    # user_.message.register(main_menu, F.text == '- - - Главное меню - - -')
+    # user_.message.register(walking_dirs)
