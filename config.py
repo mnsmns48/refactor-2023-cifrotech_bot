@@ -19,6 +19,7 @@ class Hidden:
     local_db_name: str
     description_db_name: str
     photo_path: str
+    sellers_list: list[str]
 
 
 def load_config(path: str = '..env'):
@@ -33,7 +34,8 @@ def load_config(path: str = '..env'):
         local_db_port=env.str("LOCAL_DB_PORT"),
         local_db_name=env.str("LOCAL_DB_NAME"),
         description_db_name=env.str("DESCRIPTION_DB_NAME"),
-        photo_path=env.str("PHOTO_PATH")
+        photo_path=env.str("PHOTO_PATH"),
+        sellers_list=env.str("SELLERS_LIST").split(','),
     )
 
 

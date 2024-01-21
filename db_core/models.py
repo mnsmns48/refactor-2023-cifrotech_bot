@@ -1,4 +1,5 @@
-from sqlalchemy import Table, Column, Integer, TIMESTAMP, VARCHAR, SmallInteger, Float, Boolean, MetaData, BigInteger
+from sqlalchemy import Table, Column, Integer, TIMESTAMP, VARCHAR, SmallInteger, Float, Boolean, MetaData, BigInteger, \
+    DateTime
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, declared_attr
 
 
@@ -17,6 +18,13 @@ class StockTable(Base):
     name: Mapped[str]
     quantity: Mapped[int] = mapped_column(nullable=True)
     price: Mapped[int] = mapped_column(nullable=True)
+
+
+# class Guests(Base):
+#     time_ = Column(DateTime),
+#     id_ = Column(Integer),
+#     fullname = Column(VARCHAR, nullable=True),
+#     username = Column(VARCHAR, nullable=True)
 
 
 metadata = MetaData()

@@ -1,11 +1,15 @@
 import asyncio
 
 from config import dp, bot, commands
+from db_core.engine import async_engine_pg
+from db_core.models import metadata
 from handlers.admin_handler import admin_, register_admin_handlers
 from handlers.user_handler import user_, register_user_handlers
 
 
 async def main():
+    async with async_engine_pg.begin() as connect:
+        await connect.run_sync(metadata.create_all)
     register_admin_handlers()
     register_user_handlers()
     dp.include_routers(admin_, user_)
