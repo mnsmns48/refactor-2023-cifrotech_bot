@@ -1,4 +1,5 @@
 import asyncio
+import logging
 
 from config import dp, bot, commands
 from db_core.engine import async_engine_pg
@@ -8,6 +9,7 @@ from handlers.user_handler import user_, register_user_handlers
 
 
 async def main():
+    logging.basicConfig(level=logging.INFO)
     async with async_engine_pg.begin() as connect:
         await connect.run_sync(metadata.create_all)
     register_admin_handlers()
@@ -23,7 +25,6 @@ async def main():
 
 if __name__ == '__main__':
     try:
-        print('Bot went to work')
         asyncio.run(main())
     except (KeyboardInterrupt, SystemExit):
         print('Bot Stopped')

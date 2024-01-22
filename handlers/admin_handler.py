@@ -1,3 +1,5 @@
+import asyncio
+
 from aiogram import Router, F
 from aiogram.filters import CommandStart
 from aiogram.fsm.context import FSMContext
@@ -9,6 +11,7 @@ from db_core.postgres_func import take_last_guests, get_today_activity
 from filters import AdminFilter
 from fsm import GetPrice
 from keyboards.admin_keyboard import admin_basic_kb, sellers_kb
+from support_func import check_seller
 
 admin_ = Router()
 
@@ -35,21 +38,32 @@ async def show_guests(m: Message):
     await m.answer(text=answer)
 
 
-async def load_prices(m: Message, state=FSMContext):
-    await m.answer('Выбери необходимого поставщика', reply_markup=sellers_kb)
-    await state.set_state(GetPrice.wait_price_text)
+# def test(t: str):
+#     with open('js.txt', 'w', encoding='utf-8') as file:
+#         file.write(t)
 
 
-async def get_price(m: Message, state=FSMContext):
-    await m.answer(f'ты нажал на {m.text}')
-    await state.clear()
+async def load_prices(m: Message):
+    sender = m.forward_from.id if getattr(m.forward_from.id) else m.forward_from_chat.id
+    await m.answer(text=str(sender))
+
+
+# async def load_prices(m: Message, state=FSMContext):
+#     await m.answer('Выбери необходимого поставщика', reply_markup=sellers_kb.as_markup())
+#     await state.set_state(GetPrice.wait_price_text)
+
+
+# async def get_price(c: CallbackQuery, state=FSMContext):
+#     await c.answer(text=f'Добавляем в базу данные от {c.data}')
+#     # await m.answer(m.text)
+#     await state.clear()
 
 
 def register_admin_handlers():
     admin_.message.filter(AdminFilter())
     admin_.message.register(start, CommandStart())
-    admin_.message.register(upload_pic, F.photo)
     admin_.message.register(show_sales, F.text == 'Продажи сегодня')
     admin_.message.register(show_guests, F.text == 'Последние гости')
-    admin_.message.register(load_prices, F.text == 'Загрузка прайсов')
-    admin_.message.register(get_price, GetPrice.wait_price_text)
+    admin_.message.register(load_prices, check_seller(hv.sellers_list))
+    # admin_.message.register(load_prices, F.text == 'Загрузка прайсов')
+    # admin_.callback_query.register(get_price, GetPrice.wait_price_text)

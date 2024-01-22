@@ -1,4 +1,5 @@
-from aiogram.types import KeyboardButton, ReplyKeyboardMarkup, WebAppInfo
+from aiogram.types import KeyboardButton, ReplyKeyboardMarkup, WebAppInfo, InlineKeyboardButton
+from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 from config import hv
 
@@ -11,8 +12,7 @@ admin_basic_ = [
 
 admin_basic_kb = ReplyKeyboardMarkup(resize_keyboard=True, keyboard=admin_basic_)
 
-
-sellers_keys = [
-    [KeyboardButton(text=i) for i in hv.sellers_list]
+seller_keys = [
+    [InlineKeyboardButton(text=v, callback_data=v) for k, v in hv.sellers_list.items()]
 ]
-sellers_kb = ReplyKeyboardMarkup(resize_keyboard=True, keyboard=sellers_keys)
+sellers_kb = InlineKeyboardBuilder(seller_keys)

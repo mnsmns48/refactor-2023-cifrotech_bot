@@ -20,13 +20,6 @@ class StockTable(Base):
     price: Mapped[int] = mapped_column(nullable=True)
 
 
-# class Guests(Base):
-#     time_ = Column(DateTime),
-#     id_ = Column(Integer),
-#     fullname = Column(VARCHAR, nullable=True),
-#     username = Column(VARCHAR, nullable=True)
-
-
 metadata = MetaData()
 activity = Table('activity', metadata,
                  Column('operation_code', Integer),
@@ -46,3 +39,13 @@ guests = Table('guests', metadata,
                Column('fullname', VARCHAR, nullable=True),
                Column('username', VARCHAR, nullable=True)
                )
+
+sellers = Table('sellers', metadata,
+                Column('seller', VARCHAR),
+                Column('time_', TIMESTAMP(timezone=False)),
+                Column('category', VARCHAR),
+                Column('name', VARCHAR),
+                Column('delivery_time', VARCHAR),
+                Column('price_1', Integer),
+                Column('price_2', Integer)
+                )
