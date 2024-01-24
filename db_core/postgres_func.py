@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Sequence
 
-from sqlalchemy import select, func, Result, RowMapping, Row, and_, desc
+from sqlalchemy import select, func, Result, RowMapping, Row, and_, desc, insert, Table
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from db_core.description_models import s_main, display, energy, camera, performance
@@ -139,3 +139,9 @@ async def take_last_guests(session_pg: AsyncSession) -> str:
         res += ''.join(f"{str(line[0])} {line[1:-1]} {line[-1] if line[-1] is not None else ''}")
         res += '\n'
     return res
+
+
+async def load_price_data(session_pg: AsyncSession, table: Table, data: list):
+    insert_stmt = insert(table).values(data)
+    await session_pg.execute(insert_stmt)
+    await session_pg.commit()

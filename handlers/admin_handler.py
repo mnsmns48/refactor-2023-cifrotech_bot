@@ -7,11 +7,12 @@ from aiogram.types import Message, CallbackQuery
 
 from config import hv
 from db_core.engine import AsyncScopedSessionPG
-from db_core.postgres_func import take_last_guests, get_today_activity
+from db_core.models import sellers
+from db_core.postgres_func import take_last_guests, get_today_activity, load_price_data
 from filters import AdminFilter
 from fsm import GetPrice
 from keyboards.admin_keyboard import admin_basic_kb, sellers_kb
-from support_func import check_seller
+from support_func import check_seller, PriceList
 
 admin_ = Router()
 
@@ -42,10 +43,20 @@ async def show_guests(m: Message):
 #     with open('js.txt', 'w', encoding='utf-8') as file:
 #         file.write(t)
 
+def without_regex(st):
+    g = ['⚡️', '💥', '🚚', '🔥', '🏠', '⚠️']
+    new_s = ''.join([a for a in st if a not in g])
+    print(new_s)
+
 
 async def load_prices(m: Message):
-    sender = m.forward_from.id if getattr(m.forward_from.id) else m.forward_from_chat.id
-    await m.answer(text=str(sender))
+    # with open('test.json', 'w', encoding='utf-8') as file:
+    #     file.write(m.model_dump_json())
+    k = PriceList(m)
+    for line in k.pars_price_data():
+        print(line)
+    # async with AsyncScopedSessionPG() as session_pg:
+    #     await load_price_data(session_pg=session_pg, table=sellers, data=k.pars_price_data())
 
 
 # async def load_prices(m: Message, state=FSMContext):

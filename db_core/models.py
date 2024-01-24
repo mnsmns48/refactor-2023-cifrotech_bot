@@ -1,6 +1,7 @@
 from sqlalchemy import Table, Column, Integer, TIMESTAMP, VARCHAR, SmallInteger, Float, Boolean, MetaData, BigInteger, \
     DateTime
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, declared_attr
+from sqlalchemy.sql.functions import now
 
 
 class Base(DeclarativeBase):
@@ -42,10 +43,8 @@ guests = Table('guests', metadata,
 
 sellers = Table('sellers', metadata,
                 Column('seller', VARCHAR),
-                Column('time_', TIMESTAMP(timezone=False)),
-                Column('category', VARCHAR),
+                Column('time_', TIMESTAMP(False), server_default=now()),
                 Column('name', VARCHAR),
-                Column('delivery_time', VARCHAR),
                 Column('price_1', Integer),
                 Column('price_2', Integer)
                 )
