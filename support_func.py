@@ -1,3 +1,4 @@
+import re
 from aiogram import F
 from aiogram.types import Message
 from magic_filter import MagicFilter
@@ -18,14 +19,13 @@ class PriceList:
         self.seller = hv.sellers_list.get(self.sender_id)
         self.data = m.text.split('\n')
 
-    @staticmethod
-    def pars_line(line: str):
-        result = list()
-        for i in line:
-            if i.isalnum() or i.isspace() or i == '+' or i == '/' or i == '\"' or i == ',':
-                result.append(i)
-        return ['строка ' + ''.join(result)]
-
+    # @staticmethod
+    # def pars_line(line: str):
+    #     result = list()
+    #     for i in line:
+    #         if i.isalnum() or i.isspace() or i == '+' or i == '/' or i == '\"' or i == ',':
+    #             result.append(i)
+    #     return ['строка ' + ''.join(result)]
     # k = -1
     # try:
     #     while result[k].isdigit():
@@ -42,9 +42,14 @@ class PriceList:
     # except ValueError:
     #     pass
 
+    @staticmethod
+    def pars_line_re(line: str):
+        match = re.findall(r"[\s\W]?\d{3,5}[\s]?", line)
+        print(match)
+
     def pars_price_data(self) -> list:
         out = list()
         for line in self.data:
             if len(line) >= 21 or 'наличи' in line:
-                out.append(tuple(self.pars_line(line.strip())))
-        return out
+                out.append(self.pars_line_re(line.strip()))
+        # return out

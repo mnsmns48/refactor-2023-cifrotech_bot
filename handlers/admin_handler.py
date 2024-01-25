@@ -53,8 +53,8 @@ async def load_prices(m: Message):
     # with open('test.json', 'w', encoding='utf-8') as file:
     #     file.write(m.model_dump_json())
     k = PriceList(m)
-    for line in k.pars_price_data():
-        print(line)
+    k.pars_price_data()
+
     # async with AsyncScopedSessionPG() as session_pg:
     #     await load_price_data(session_pg=session_pg, table=sellers, data=k.pars_price_data())
 
