@@ -4,7 +4,7 @@ from aiogram.types import Message
 from magic_filter import MagicFilter
 from sqlalchemy.sql.functions import now
 
-from config import hv
+from config import hv, price_range
 
 
 def check_seller(sellers: dict) -> MagicFilter:
@@ -19,37 +19,22 @@ class PriceList:
         self.seller = hv.sellers_list.get(self.sender_id)
         self.data = m.text.split('\n')
 
-    # @staticmethod
-    # def pars_line(line: str):
-    #     result = list()
-    #     for i in line:
-    #         if i.isalnum() or i.isspace() or i == '+' or i == '/' or i == '\"' or i == ',':
-    #             result.append(i)
-    #     return ['строка ' + ''.join(result)]
-    # k = -1
-    # try:
-    #     while result[k].isdigit():
-    #         k -= 1
-    # except IndexError:
-    #     pass
-    # try:
-    #     return [self.seller,
-    #             now(),
-    #             ''.join(result[:k + 1]).strip(),
-    #             int(''.join(result[k + 1:])),
-    #             int(''.join(result[k + 1:])) + 1500
-    #             ]
-    # except ValueError:
-    #     pass
-
     @staticmethod
-    def pars_line_re(line: str):
-        match = re.findall(r"[\s\W]?\d{3,5}[\s]?", line)
-        print(match)
+    def pars_line(line: str):
+        match = re.findall(r"[\s\W]+\d{3,5}[\s\W]?", line)
+        result = list()
+        if match:
+            for i in match[-1]:
+                if i.isdigit():
+                    result.append(i)
+        name = line.replace(match[-1], '')
+        price = int(''.join(result))
+        for i in price_range:
+            if i[0] <= price <= i[1]:
+                print(name, price, price + i[2])
 
     def pars_price_data(self) -> list:
         out = list()
         for line in self.data:
-            if len(line) >= 21 or 'наличи' in line:
-                out.append(self.pars_line_re(line.strip()))
+            out.append(self.pars_line(line.strip()))
         # return out
