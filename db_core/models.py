@@ -44,6 +44,8 @@ guests = Table('guests', metadata,
 sellers = Table('sellers', metadata,
                 Column('seller', VARCHAR),
                 Column('time_', TIMESTAMP(False), server_default=now()),
+                Column('product_type', VARCHAR),
+                Column('brand', VARCHAR),
                 Column('name', VARCHAR),
                 Column('price_1', Integer),
                 Column('price_2', Integer)

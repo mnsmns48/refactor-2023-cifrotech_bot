@@ -26,6 +26,18 @@ price_range = [
     [130000, 200000, 9500]
 ]
 
+names_intersection = {
+    'Poco': [('product_type', 'Смартфон'), ('brand', 'Xiaomi')],
+    'Redmi': [('brand', 'Xiaomi')],
+    'iPhone': [('product_type', 'Apple'), ('brand', 'Apple')],
+    'Galaxy': [('brand', 'Samsung')],
+    'Pova': [('product_type', 'Смартфон'), ('brand', 'Tecno')],
+    'Airpods': [('product_type', 'Apple'), ('brand', 'Apple')],
+    'AirPods': [('product_type', 'Apple'), ('brand', 'Apple')],
+    'AW': [('product_type', 'Apple'), ('brand', 'Apple')],
+
+}
+
 
 @dataclass
 class Hidden:
@@ -73,4 +85,3 @@ hv = load_config()
 bot = Bot(token=hv.bot_token)
 dp = Dispatcher()
 y = YaDisk(token=hv.yatoken)
-
