@@ -35,6 +35,8 @@ names_intersection = {
     'Airpods': [('product_type', 'Apple'), ('brand', 'Apple')],
     'AirPods': [('product_type', 'Apple'), ('brand', 'Apple')],
     'AW': [('product_type', 'Apple'), ('brand', 'Apple')],
+    'колонка': [('product_type', 'Аудиотовары')],
+    'наушники': [('product_type', 'Аудиотовары')],
 
 }
 

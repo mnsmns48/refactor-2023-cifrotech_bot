@@ -52,10 +52,15 @@ def without_regex(st):
 async def load_prices(m: Message):
     # with open('test.json', 'w', encoding='utf-8') as file:
     #     file.write(m.model_dump_json())
-    k = PriceList(m)
-    for data_set in k.pars_price_data():
-        for k, v in data_set.items():
-            print(f'{k}: {v}')
+    # k = PriceList(m).pars_price_data()
+    # for data_set in k:
+    #     for k, v in data_set.items():
+    #         print(f'{k}: {v}')
+    #     print('\n---------------------\n')
+    k = m.text
+    f = m.text.split('\n')
+    for line in f:
+        print(line)
 
     # async with AsyncScopedSessionPG() as session_pg:
     #     await load_price_data(session_pg=session_pg, table=sellers, data=k.pars_price_data())

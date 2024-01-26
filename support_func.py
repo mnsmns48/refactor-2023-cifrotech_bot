@@ -81,11 +81,13 @@ class PriceList:
     def pars_price_data(self) -> list:
         result_list = list()
         for line in self.data:
-            pars_data = self.pars_line(line)
+            pars_data = self.pars_line(line.strip())
             if pars_data.get('price_2'):
                 result_list.append(pars_data)
         for data_set in result_list:
             data_set['seller'] = self.seller
             if data_set.get('brand') in names_intersection.keys():
                 data_set.update(names_intersection[data_set.get('brand')])
+            if data_set.get('product_type') in names_intersection.keys():
+                data_set.update(names_intersection[data_set.get('product_type')])
         return result_list
