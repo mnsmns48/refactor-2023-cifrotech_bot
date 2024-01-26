@@ -37,8 +37,40 @@ names_intersection = {
     'AW': [('product_type', 'Apple'), ('brand', 'Apple')],
     'колонка': [('product_type', 'Аудиотовары')],
     'наушники': [('product_type', 'Аудиотовары')],
-
 }
+
+product_type_regexp_stmt = r"Смартфон|" \
+                           "Внешний аккумулятор|" \
+                           "Роутер|" \
+                           "Умные часы|" \
+                           "Ноутбук|" \
+                           "Планшет|" \
+                           "Фитнес Браслет|" \
+                           "Монитор|" \
+                           "пылесос|" \
+                           "Приставка|" \
+                           "наушники|" \
+                           "колонка|" \
+                           "Телевизор"
+
+brand_regexp_stmt = r"iPhone|" \
+                    "Xiaomi|" \
+                    "Samsung|" \
+                    "Redmi|" \
+                    "JBL|" \
+                    "Galaxy|" \
+                    "Airpods|" \
+                    "Poco|" \
+                    "HOCO|" \
+                    "Tecno|" \
+                    "Infinix|" \
+                    "Nokia|" \
+                    "Realme|" \
+                    "TCL|" \
+                    "Яндекс|" \
+                    "Pova|" \
+                    "AW|" \
+                    "AirPods"
 
 
 @dataclass
