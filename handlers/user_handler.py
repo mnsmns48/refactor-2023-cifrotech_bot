@@ -6,8 +6,8 @@ from aiogram.types import Message, CallbackQuery, FSInputFile
 
 from config import bot, hv
 from db_core.engine import AsyncScopedSessionPG, AsyncScopedSessionDesc
-from db_core.postgres_func import get_description
-from db_core.support_functions import user_spotted, date_out
+from db_core.DB_interaction import get_description, user_spotted
+from db_core.support_functions import date_out
 from keyboards.user_keyboards import main_menu_kb, keyboard_maker
 
 user_ = Router()

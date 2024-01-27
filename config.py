@@ -37,6 +37,7 @@ names_intersection = {
     'AW': [('product_type', 'Apple'), ('brand', 'Apple')],
     'колонка': [('product_type', 'Аудиотовары')],
     'наушники': [('product_type', 'Аудиотовары')],
+    'Buds': [('product_type', 'Аудиотовары'), ('brand', 'Samsung')],
 }
 
 product_type_regexp_stmt = r"Смартфон|" \
@@ -70,7 +71,8 @@ brand_regexp_stmt = r"iPhone|" \
                     "Яндекс|" \
                     "Pova|" \
                     "AW|" \
-                    "AirPods"
+                    "AirPods|" \
+                    "Buds"
 
 
 @dataclass

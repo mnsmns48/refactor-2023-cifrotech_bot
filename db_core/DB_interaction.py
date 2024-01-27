@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Sequence
 
-from sqlalchemy import select, func, Result, RowMapping, Row, and_, desc, insert, Table
+from sqlalchemy import select, func, Result, RowMapping, Row, and_, desc, insert, Table, Column
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from db_core.description_models import s_main, display, energy, camera, performance
@@ -141,7 +141,24 @@ async def take_last_guests(session_pg: AsyncSession) -> str:
     return res
 
 
-async def load_price_data(session_pg: AsyncSession, table: Table, data: list):
-    insert_stmt = insert(table).values(data)
-    await session_pg.execute(insert_stmt)
+async def user_spotted(time_: datetime, id_: int, fullname: str, username: str, session_pg: AsyncSession) -> None:
+    insert_data = {
+        'time_': time_,
+        'id_': id_,
+        'fullname': fullname,
+        'username': username
+    }
+    await session_pg.execute(insert(guests), insert_data)
     await session_pg.commit()
+
+
+async def load_price_data(session_pg: AsyncSession, table: Table, data: list):
+    await session_pg.execute(insert(table), data)
+    await session_pg.commit()
+
+
+async def get_lack_data(session: AsyncSession, table: Table, name: list):
+    query = select(table).filter(table.c.name.in_(name))
+    data: Result = await session.execute(query)
+    return data.fetchall()
+

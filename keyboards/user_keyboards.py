@@ -2,7 +2,7 @@ from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardBut
 from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from db_core.postgres_func import get_dirs_
+from db_core.DB_interaction import get_dirs_
 
 main_menu_ = [
     [KeyboardButton(text='Запуск приложения', web_app=WebAppInfo(url='https://24cifrotech.ru'))],

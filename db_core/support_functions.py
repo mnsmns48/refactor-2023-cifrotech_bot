@@ -1,3 +1,4 @@
+import asyncio
 import re
 from datetime import datetime, timezone, timedelta
 from typing import Any
@@ -5,11 +6,12 @@ from typing import Any
 from aiogram import F
 from aiogram.types import Message
 from magic_filter import MagicFilter
-from sqlalchemy import Row, insert
+from sqlalchemy import Row, Table, Column, select, Result
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from config import hv, price_range, names_intersection, product_type_regexp_stmt, brand_regexp_stmt
-from db_core.models import guests
+from db_core.engine import AsyncScopedSessionPG
+from db_core.models import sellers
 
 
 def month_conv(m: Row[tuple[Any, ...] | Any]) -> str:
@@ -40,18 +42,7 @@ def date_out(date: datetime) -> str:
     return out_date
 
 
-async def user_spotted(time_: datetime, id_: int, fullname: str, username: str, session_pg: AsyncSession) -> None:
-    insert_data = {
-        'time_': time_,
-        'id_': id_,
-        'fullname': fullname,
-        'username': username
-    }
-    await session_pg.execute(insert(guests), insert_data)
-    await session_pg.commit()
-
-
-def check_seller(sellers: dict) -> MagicFilter:
+async def check_seller(sellers: dict) -> MagicFilter:
     chat, id_ = list(), list()
     [chat.append(k) if k < 0 else id_.append(k) for k in sellers.keys()]
     return F.forward_from.id.in_(id_) | F.forward_from_chat.id.in_(chat)
@@ -64,7 +55,7 @@ class PriceList:
         self.data = m.text.split('\n')
 
     @staticmethod
-    def pars_line(line: str) -> dict:
+    async def pars_line(line: str) -> dict:
         result_dict = {
             'product_type': None,
             'brand': None,
@@ -92,10 +83,11 @@ class PriceList:
                 result_dict['brand'] = brand_name.group()
         return result_dict
 
-    def pars_price_data(self) -> list:
+    async def pars_price_data(self) -> list:
+        unknown_elements = list()
         result_list = list()
         for line in self.data:
-            pars_data = self.pars_line(line.strip())
+            pars_data = await self.pars_line(line.strip())
             if pars_data.get('price_2'):
                 result_list.append(pars_data)
         for data_set in result_list:
@@ -104,4 +96,6 @@ class PriceList:
                 data_set.update(names_intersection[data_set.get('brand')])
             if data_set.get('product_type') in names_intersection.keys():
                 data_set.update(names_intersection[data_set.get('product_type')])
-        return result_list
+            if data_set.get('product_type') is None or data_set.get('brand') is None:
+                unknown_elements.append(data_set['name'])
+        return unknown_elements
