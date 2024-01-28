@@ -59,7 +59,7 @@ async def show_product(c: CallbackQuery):
     await c.message.answer_photo(photo=photo, caption=text)
 
 
-def register_user_handlers():
+async def register_user_handlers():
     user_.callback_query.register(show_product)
     user_.message.register(start, CommandStart())
     # user_.message.register(main_menu, F.text == '- - - Главное меню - - -')

@@ -13,7 +13,7 @@ async def main():
     async with async_engine_pg.begin() as connect:
         await connect.run_sync(metadata.create_all)
     await register_admin_handlers()
-    register_user_handlers()
+    await register_user_handlers()
     dp.include_routers(admin_, user_)
     await bot.delete_webhook(drop_pending_updates=True)
     await bot.set_my_commands(commands)
