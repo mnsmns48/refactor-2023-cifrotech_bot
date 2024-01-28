@@ -1,4 +1,4 @@
-import asyncio
+
 import re
 from datetime import datetime, timezone, timedelta
 from typing import Any
@@ -6,7 +6,7 @@ from typing import Any
 from aiogram import F
 from aiogram.types import Message
 from magic_filter import MagicFilter
-from sqlalchemy import Row, Table, Column, select, Result
+from sqlalchemy import Row, Table, select, Result
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from config import hv, price_range, names_intersection, product_type_regexp_stmt, brand_regexp_stmt
@@ -42,10 +42,16 @@ def date_out(date: datetime) -> str:
     return out_date
 
 
-async def check_seller(sellers: dict) -> MagicFilter:
+async def check_seller(sellers_dict: dict) -> MagicFilter:
     chat, id_ = list(), list()
-    [chat.append(k) if k < 0 else id_.append(k) for k in sellers.keys()]
+    [chat.append(k) if k < 0 else id_.append(k) for k in sellers_dict.keys()]
     return F.forward_from.id.in_(id_) | F.forward_from_chat.id.in_(chat)
+
+
+async def get_lack_data(session: AsyncSession, table: Table, names: set):
+    query = select(table).filter(table.c.name.in_(names))
+    data: Result = await session.execute(query)
+    return data.fetchall()
 
 
 class PriceList:
@@ -53,6 +59,7 @@ class PriceList:
         self.sender_id = m.forward_from.id if m.forward_from else m.forward_from_chat.id
         self.seller = hv.sellers_list.get(self.sender_id)
         self.data = m.text.split('\n')
+        self.date = m.forward_date.replace(hour=m.forward_date.hour + 3).replace(tzinfo=None)
 
     @staticmethod
     async def pars_line(line: str) -> dict:
@@ -84,18 +91,37 @@ class PriceList:
         return result_dict
 
     async def pars_price_data(self) -> list:
-        unknown_elements = list()
+        unknown_items = set()
         result_list = list()
         for line in self.data:
             pars_data = await self.pars_line(line.strip())
             if pars_data.get('price_2'):
                 result_list.append(pars_data)
         for data_set in result_list:
+            data_set['time_'] = self.date
             data_set['seller'] = self.seller
             if data_set.get('brand') in names_intersection.keys():
                 data_set.update(names_intersection[data_set.get('brand')])
             if data_set.get('product_type') in names_intersection.keys():
                 data_set.update(names_intersection[data_set.get('product_type')])
-            if data_set.get('product_type') is None or data_set.get('brand') is None:
-                unknown_elements.append(data_set['name'])
-        return unknown_elements
+            if data_set.get('product_type') is None or data_set.get('product_type') is None:
+                unknown_items.add(data_set.get('name'))
+        if unknown_items:
+            async with AsyncScopedSessionPG() as session_pg:
+                db_search_res = await get_lack_data(session=session_pg, table=sellers, names=unknown_items)
+            unknown_items.clear()
+            founded_items_from_db = dict()
+            for item in db_search_res:
+                founded_items_from_db[item.name] = [item.product_type, item.brand]
+            for data_set in result_list:
+                if data_set.get('product_type') is None:
+                    try:
+                        data_set['product_type'] = founded_items_from_db.get(data_set['name'])[0]
+                    except TypeError:
+                        pass
+                if data_set.get('brand') is None:
+                    try:
+                        data_set['brand'] = founded_items_from_db.get(data_set.get('name'))[1]
+                    except TypeError:
+                        pass
+        return result_list
