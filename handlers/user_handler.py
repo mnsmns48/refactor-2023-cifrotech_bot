@@ -22,7 +22,7 @@ async def start(m: Message):
                            username=m.from_user.username,
                            session_pg=session_pg)
     await bot.send_message(chat_id=hv.admin_id[0],
-                           text=f"new user spotted\n"
+                           text=f"new user!\n"
                                 f"{date_out(m.date)} "
                                 f"{m.from_user.full_name} "
                                 f"{m.from_user.username}\n"
@@ -70,6 +70,7 @@ async def get_order_list(m: Message):
     else:
         text = await price_list_formation(m.text)
         await m.answer(text=text)
+
 
 
 async def register_user_handlers():

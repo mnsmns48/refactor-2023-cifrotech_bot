@@ -5,7 +5,7 @@ from typing import Any
 from aiogram import F
 from aiogram.types import Message
 from magic_filter import MagicFilter
-from sqlalchemy import Row, Table, select, Result
+from sqlalchemy import Row, Table, select, Result, and_, text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from config import hv, price_range, names_intersection, product_type_regexp_stmt, brand_regexp_stmt, cfg_order_category_
@@ -127,14 +127,37 @@ class PriceList:
 
 
 async def price_list_formation(message: str) -> str:
+    output_str = str()
     if cfg_order_category_.get(message) == 'main':
         return 'main'
     else:
         if cfg_order_category_.get(message) == 'apple':
-            stmt = select(sellers).filter(sellers.c.brand == 'apple')
-            async with AsyncScopedSessionPG() as session:
-                response = await session.execute(stmt)
-            r = response.fetchall()
-            for line in r:
-                out = ''.join(line.name)
-            return out
+            stmt = (select(sellers).filter(sellers.c.brand == 'Apple')
+                    .order_by(sellers.c.name, sellers.c.price_2))
+        if cfg_order_category_.get(message) == 'samsung':
+            stmt = (select(sellers).filter(sellers.c.brand == 'Samsung')
+                    .order_by(sellers.c.product_type.desc(), sellers.c.price_2))
+        if cfg_order_category_.get(message) == 'android':
+            stmt = (select(sellers)
+                    .filter(and_(sellers.c.product_type == 'Смартфон'),
+                            (sellers.c.brand.not_in(['Samsung', 'Apple']))).order_by(sellers.c.brand,
+                                                                                     sellers.c.price_2))
+        if cfg_order_category_.get(message) == 'xiaomi':
+            stmt = (select(sellers)
+                    .filter(and_(sellers.c.product_type != 'Смартфон'),
+                            (sellers.c.brand == 'Xiaomi'))
+                    .order_by(sellers.c.product_type, sellers.c.price_2))
+        if cfg_order_category_.get(message) == 'audio':
+            stmt = (select(sellers)
+                    .filter(sellers.c.product_type == 'Аудиотовар')
+                    .order_by(sellers.c.brand, sellers.c.price_2))
+        if cfg_order_category_.get(message) == 'tv':
+            stmt = (select(sellers).filter(sellers.c.product_type.in_
+                                           (['Телевизор', 'Игровая приставка', 'Смарт приставки']))
+                    .order_by(sellers.c.name, sellers.c.price_2))
+        async with AsyncScopedSessionPG() as session:
+            response = await session.execute(stmt)
+        r = response.fetchall()
+        for line in r:
+            output_str = output_str + ''.join(f"{line.name} {line.price_2}\n")
+        return output_str
