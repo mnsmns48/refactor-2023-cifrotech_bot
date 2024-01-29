@@ -37,8 +37,6 @@ async def show_guests(m: Message):
 
 
 async def load_prices(m: Message):
-    with open('date.json', 'w', encoding='utf-8') as file:
-        file.write(m.model_dump_json())
     unknown_items = bool()
     data_set = await PriceList(m).pars_price_data()
     async with AsyncScopedSessionPG() as session:

@@ -43,10 +43,10 @@ guests = Table('guests', metadata,
 
 sellers = Table('sellers', metadata,
                 Column('seller', VARCHAR),
-                Column('time_', TIMESTAMP(False), server_default=now()),
+                Column('time_', TIMESTAMP(False), primary_key=True),
                 Column('product_type', VARCHAR),
                 Column('brand', VARCHAR),
-                Column('name', VARCHAR),
+                Column('name', VARCHAR, primary_key=True),
                 Column('price_1', Integer),
                 Column('price_2', Integer)
                 )

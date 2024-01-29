@@ -1,7 +1,8 @@
 from datetime import datetime
 from typing import Sequence
 
-from sqlalchemy import select, func, Result, RowMapping, Row, and_, desc, insert, Table
+from sqlalchemy import select, func, Result, RowMapping, Row, and_, desc, Table
+from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from db_core.description_models import s_main, display, energy, camera, performance
@@ -153,7 +154,7 @@ async def user_spotted(time_: datetime, id_: int, fullname: str, username: str, 
 
 
 async def upload_price_data(session_pg: AsyncSession, table: Table, data: list):
-    await session_pg.execute(insert(table), data)
+    await session_pg.execute(insert(table=table).values(data).on_conflict_do_nothing(index_elements=['time_', 'name']))
     await session_pg.commit()
 
 
