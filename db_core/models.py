@@ -1,7 +1,5 @@
-from sqlalchemy import Table, Column, Integer, TIMESTAMP, VARCHAR, SmallInteger, Float, Boolean, MetaData, BigInteger, \
-    DateTime
+from sqlalchemy import Table, Column, Integer, TIMESTAMP, VARCHAR, SmallInteger, Float, Boolean, MetaData, BigInteger
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, declared_attr
-from sqlalchemy.sql.functions import now
 
 
 class Base(DeclarativeBase):
