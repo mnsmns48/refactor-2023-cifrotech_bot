@@ -70,7 +70,7 @@ class PriceList:
             'price_1': None,
             'price_2': None
         }
-        price_res_match = re.findall(r"[\s\W]+\d{3,5}[\s\W]?", line)
+        price_res_match = re.findall(r"[\s\W]+\d{3,6}[\s\W]?", line)
         product_type = re.search(product_type_regexp_stmt, line)
         brand_name = re.search(brand_regexp_stmt, line)
         if len(price_res_match) > 0:
