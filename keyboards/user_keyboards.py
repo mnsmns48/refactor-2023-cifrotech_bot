@@ -3,15 +3,23 @@ from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from db_core.DB_interaction import get_dirs_
+from config import cfg_order_category_
 
 main_menu_ = [
-    [KeyboardButton(text='Запуск приложения', web_app=WebAppInfo(url='https://24cifrotech.ru'))],
-    [KeyboardButton(text='🧾 Под заказ 🚀')],
+    [KeyboardButton(text='🛒 Товары в наличии 🛍️', web_app=WebAppInfo(url='https://24cifrotech.ru'))],
+    [KeyboardButton(text='🧾 Под заказ 🚀 [СПЕЦ ЦЕНЫ]')],
 ]
 
 main_menu_kb = ReplyKeyboardMarkup(resize_keyboard=True,
                                    is_persistent=True,
                                    keyboard=main_menu_)
+
+order_ = [[KeyboardButton(text=key)] for key in cfg_order_category_.keys()]
+
+
+order_kb = ReplyKeyboardMarkup(resize_keyboard=True,
+                               is_persistent=True,
+                               keyboard=order_)
 
 
 async def keyboard_maker(path: str, session_pg: AsyncSession) -> InlineKeyboardMarkup | ReplyKeyboardMarkup:

@@ -1,4 +1,3 @@
-
 import re
 from datetime import datetime, timezone, timedelta
 from typing import Any
@@ -9,7 +8,7 @@ from magic_filter import MagicFilter
 from sqlalchemy import Row, Table, select, Result
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from config import hv, price_range, names_intersection, product_type_regexp_stmt, brand_regexp_stmt
+from config import hv, price_range, names_intersection, product_type_regexp_stmt, brand_regexp_stmt, cfg_order_category_
 from db_core.engine import AsyncScopedSessionPG
 from db_core.models import sellers
 
@@ -125,3 +124,17 @@ class PriceList:
                     except TypeError:
                         pass
         return result_list
+
+
+async def price_list_formation(message: str) -> str:
+    if cfg_order_category_.get(message) == 'main':
+        return 'main'
+    else:
+        if cfg_order_category_.get(message) == 'apple':
+            stmt = select(sellers).filter(sellers.c.brand == 'apple')
+            async with AsyncScopedSessionPG() as session:
+                response = await session.execute(stmt)
+            r = response.fetchall()
+            for line in r:
+                out = ''.join(line.name)
+            return out

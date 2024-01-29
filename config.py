@@ -5,6 +5,16 @@ from aiogram.types import BotCommand
 from environs import Env
 from yadisk import YaDisk
 
+cfg_order_category_ = {
+    '↕️Главное меню': 'main',
+    '🍎Apple 📱iPhone 📟iPad ⌚AppleWatch': 'apple',
+    '🤳Samsung 📱S-серия 📟Планшеты ⌚Samsung Watch': 'samsung',
+    '📳Android 📱смартфоны разных брендов': 'android',
+    '🔌Разная техника 🎼Xiaomi': 'xiaomi',
+    '🎶Аудиотовары 🔊Умные колонки 🎧Наушники': 'audio',
+    '🖥️Телевизоры 🎮Playstation ▶️Смарт-TV': 'tv',
+}
+
 dir_with_desc = [80, 81, 82, 83, 84, 87, 101]
 price_range = [
     [0, 4990, 500],
@@ -71,7 +81,8 @@ brand_regexp_stmt = r"iPhone|" \
                     "Pova|" \
                     "AW|" \
                     "AirPods|" \
-                    "Buds"
+                    "Buds|" \
+                    "Nintendo"
 
 
 @dataclass
