@@ -159,5 +159,5 @@ async def price_list_formation(message: str) -> str:
             response = await session.execute(stmt)
         r = response.fetchall()
         for line in r:
-            output_str = output_str + ''.join(f"{line.name} {line.price_2}\n")
+            output_str = output_str + ''.join(f"{line.name} ➛ {line.price_2} ₽\n")
         return output_str

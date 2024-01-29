@@ -66,11 +66,10 @@ async def get_category_by_order(m: Message):
 
 async def get_order_list(m: Message):
     if await price_list_formation(m.text) == 'main':
-        await m.answer('Главное меню', reply_markup=main_menu_kb)
+        await m.answer('Главное меню:', reply_markup=main_menu_kb)
     else:
         text = await price_list_formation(m.text)
         await m.answer(text=text)
-
 
 
 async def register_user_handlers():
