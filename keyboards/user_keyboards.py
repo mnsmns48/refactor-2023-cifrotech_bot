@@ -16,10 +16,12 @@ main_menu_kb = ReplyKeyboardMarkup(resize_keyboard=True,
 
 order_ = [[KeyboardButton(text=key)] for key in cfg_order_category_.keys()]
 
-
 order_kb = ReplyKeyboardMarkup(resize_keyboard=True,
                                is_persistent=True,
                                keyboard=order_)
+
+choose_order = InlineKeyboardBuilder()
+choose_order.add(InlineKeyboardButton(text='Заказать', url=f"https://t.me/tser88"))
 
 
 async def keyboard_maker(path: str, session_pg: AsyncSession) -> InlineKeyboardMarkup | ReplyKeyboardMarkup:

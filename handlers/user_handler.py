@@ -8,7 +8,7 @@ from config import bot, hv, cfg_order_category_
 from db_core.engine import AsyncScopedSessionPG, AsyncScopedSessionDesc
 from db_core.DB_interaction import get_description, user_spotted
 from db_core.support_functions import date_out, price_list_formation
-from keyboards.user_keyboards import main_menu_kb, keyboard_maker, order_kb
+from keyboards.user_keyboards import main_menu_kb, keyboard_maker, order_kb, choose_order
 
 user_ = Router()
 
@@ -69,11 +69,17 @@ async def get_order_list(m: Message):
         await m.answer('Главное меню:', reply_markup=main_menu_kb)
     else:
         text = await price_list_formation(m.text)
-        await m.answer(text=text)
+        if len(text) > 4096:
+            for i in range(0, len(text), 4096):
+                part_mess = text[i: i + 4096]
+                await m.answer(part_mess)
+        else:
+            await m.answer(text)
+        await m.answer('Для заказа жми на кнопку', reply_markup=choose_order.as_markup())
 
 
 async def register_user_handlers():
-    user_.callback_query.register(show_product)
+    # user_.callback_query.register(show_product)
     user_.message.register(start, CommandStart())
     user_.message.register(get_category_by_order, F.text == '🧾 Под заказ 🚀 [СПЕЦ ЦЕНЫ]')
     user_.message.register(get_order_list, F.text.in_(cfg_order_category_.keys()))
