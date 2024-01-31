@@ -12,6 +12,7 @@ from filters import AdminFilter
 from fsm import GetData
 from keyboards.admin_keyboard import admin_basic_kb, send_to_channel
 from db_core.support_functions import check_seller, PriceList
+from keyboards.user_keyboards import choose_order
 
 admin_ = Router()
 
@@ -63,7 +64,15 @@ async def send_to_channel_(c: CallbackQuery, state: FSMContext):
         data = await state.get_data()
         for line in data.get('message'):
             text = text + ''.join(f"✷ {line.get('name')} ➛ {line.get('price_2')} ₽\n")
-        await bot.send_message(chat_id=hv.channel_id, text=text)
+        if len(text) > 4096:
+            for i in range(0, len(text), 4096):
+                part_mess = text[i: i + 4096]
+                await bot.send_message(chat_id=hv.channel_id, text=part_mess)
+        else:
+            await bot.send_message(chat_id=hv.channel_id, text=text)
+        await bot.send_message(chat_id=hv.channel_id,
+                               text='Связаться для заказа ⤵️',
+                               reply_markup=choose_order.as_markup())
         await state.clear()
 
 

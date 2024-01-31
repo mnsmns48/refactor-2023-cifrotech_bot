@@ -11,4 +11,4 @@ admin_basic_kb = ReplyKeyboardMarkup(resize_keyboard=True, keyboard=admin_basic_
 
 send_to_channel = InlineKeyboardBuilder()
 send_to_channel.add(InlineKeyboardButton(text='Отправить в канал', callback_data="send_to_channel"))
-send_to_channel.add(InlineKeyboardButton(text='Пропустить отправку', callback_data="cancel_sending"))
+send_to_channel.add(InlineKeyboardButton(text='Пропустить', callback_data="cancel_sending"))

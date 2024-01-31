@@ -35,7 +35,6 @@ async def start(m: Message):
                                  f'Телеграм канал @cifrotechmobile\n\n'
                                  f'Управление через кнопки ↓ ↓ ↓ ↓ ↓ ↓ ',
                          reply_markup=main_menu_kb)
-    # await m.answer(text='usermode', reply_markup=main_menu_kb)
 
 
 async def main_menu(m: Message):

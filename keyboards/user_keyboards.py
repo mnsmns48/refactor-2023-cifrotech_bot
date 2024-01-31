@@ -21,7 +21,7 @@ order_kb = ReplyKeyboardMarkup(resize_keyboard=True,
                                keyboard=order_)
 
 choose_order = InlineKeyboardBuilder()
-choose_order.add(InlineKeyboardButton(text='Заказать', url=f"https://t.me/tser88"))
+choose_order.add(InlineKeyboardButton(text='Заказать', url=f"https://t.me/cifrotech_mobile"))
 
 
 async def keyboard_maker(path: str, session_pg: AsyncSession) -> InlineKeyboardMarkup | ReplyKeyboardMarkup:
