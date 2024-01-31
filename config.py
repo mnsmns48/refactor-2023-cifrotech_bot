@@ -88,6 +88,7 @@ brand_regexp_stmt = r"iPhone|" \
 @dataclass
 class Hidden:
     bot_token: str
+    channel_id: int
     admin_id: list[int]
     yatoken: str
     local_db_username: str
@@ -104,6 +105,7 @@ def load_config(path: str = '..env'):
     env.read_env()
     return Hidden(
         admin_id=list(map(int, env.list("ADMIN_ID"))),
+        channel_id=env.int("CHANNEL_ID"),
         bot_token=env.str("BOT_TOKEN"),
         yatoken=env.str("YATOKEN"),
         local_db_username=env.str("LOCAL_DB_USERNAME"),

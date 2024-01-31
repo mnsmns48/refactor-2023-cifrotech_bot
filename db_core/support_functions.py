@@ -132,16 +132,15 @@ async def price_list_formation(message: str) -> str:
         return 'main'
     else:
         if cfg_order_category_.get(message) == 'apple':
-            stmt = (select(sellers)
-                    .filter(and_(sellers.c.brand == 'Apple'),
-                            (func.DATE(sellers.c.time_) >= datetime.now() - timedelta(3)))
-                    .order_by(sellers.c.name, sellers.c.price_2))
+            sub = select(func.max(sellers.c.time_).filter(sellers.c.brand == 'Apple')).scalar_subquery()
+            stmt = select(sellers).filter(and_(sellers.c.time_ == sub), (sellers.c.brand == 'Apple')) \
+                .order_by(sellers.c.name, sellers.c.price_2)
 
         if cfg_order_category_.get(message) == 'samsung':
             stmt = (select(sellers)
                     .filter(and_(sellers.c.brand == 'Samsung'),
                             (func.DATE(sellers.c.time_) >= datetime.now() - timedelta(3)))
-                    .order_by(sellers.c.product_type.desc(), sellers.c.price_2))
+                    .order_by(sellers.c.price_2))
 
         if cfg_order_category_.get(message) == 'android':
             stmt = (select(sellers)
@@ -175,4 +174,5 @@ async def price_list_formation(message: str) -> str:
         result = response.fetchall()
         for line in result:
             output_str = output_str + ''.join(f"✷ {line.name} ➛ {line.price_2} ₽\n")
-        return output_str
+
+    return output_str
