@@ -10,7 +10,7 @@ cfg_order_category_ = {
     '🍎Apple 📱iPhone 📟iPad ⌚AppleWatch': 'apple',
     '🤳Samsung 📱S-серия 📟Планшеты ⌚Samsung Watch': 'samsung',
     '📳Android 📱смартфоны разных брендов': 'android',
-    '🔌Разная техника 🎼Xiaomi': 'xiaomi',
+    '🔌Умные товары🎼Xiaomi Hoco': 'xiaomi',
     '🎶Аудиотовары 🔊Умные колонки 🎧Наушники': 'audio',
     '🖥️Телевизоры 🎮Playstation ▶️Смарт-TV': 'tv',
 }
@@ -82,7 +82,8 @@ brand_regexp_stmt = r"iPhone|" \
                     "AW|" \
                     "AirPods|" \
                     "Buds|" \
-                    "Nintendo"
+                    "Nintendo|" \
+                    "HOCO"
 
 
 @dataclass

@@ -1,14 +1,16 @@
 from aiogram import Router, F
 from aiogram.filters import CommandStart
+from aiogram.fsm.context import FSMContext
 
-from aiogram.types import Message
+from aiogram.types import Message, CallbackQuery
 
-from config import hv
+from config import hv, bot
 from db_core.engine import AsyncScopedSessionPG
 from db_core.models import sellers
 from db_core.DB_interaction import take_last_guests, get_today_activity, upload_price_data
 from filters import AdminFilter
-from keyboards.admin_keyboard import admin_basic_kb
+from fsm import GetData
+from keyboards.admin_keyboard import admin_basic_kb, send_to_channel
 from db_core.support_functions import check_seller, PriceList
 
 admin_ = Router()
@@ -36,7 +38,7 @@ async def show_guests(m: Message):
     await m.answer(text=answer)
 
 
-async def load_prices(m: Message):
+async def load_prices(m: Message, state: FSMContext):
     unknown_items = bool()
     data_set = await PriceList(m).pars_price_data()
     async with AsyncScopedSessionPG() as session:
@@ -45,13 +47,29 @@ async def load_prices(m: Message):
         if i.get('product_type') is None or i.get('brand') is None:
             unknown_items = True
     if unknown_items:
-        await m.answer('Downloaded... Check UNKNOWN records !!')
+        await m.answer('Downloaded... Check UNKNOWN records !!', reply_markup=send_to_channel.as_markup())
     else:
-        await m.answer('FULL OK')
+        await m.answer('FULL OK', reply_markup=send_to_channel.as_markup())
+    await state.update_data(message=data_set)
+    await state.set_state(GetData.price_text)
+
+
+async def send_to_channel_(c: CallbackQuery, state: FSMContext):
+    await c.answer('ок')
+    if c.data == "cancel_sending":
+        await state.clear()
+    if c.data == "send_to_channel":
+        text = str()
+        data = await state.get_data()
+        for line in data.get('message'):
+            text = text + ''.join(f"✷ {line.get('name')} ➛ {line.get('price_2')} ₽\n")
+        await bot.send_message(chat_id=hv.channel_id, text=text)
+        await state.clear()
 
 
 async def register_admin_handlers():
     admin_.message.filter(AdminFilter())
+    admin_.callback_query.register(send_to_channel_, GetData.price_text)
     admin_.message.register(start, CommandStart())
     admin_.message.register(show_sales, F.text == 'Продажи сегодня')
     admin_.message.register(show_guests, F.text == 'Последние гости')
