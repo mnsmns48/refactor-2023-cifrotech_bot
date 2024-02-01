@@ -137,10 +137,13 @@ async def price_list_formation(message: str) -> str:
                 .order_by(sellers.c.name, sellers.c.price_2)
 
         if cfg_order_category_.get(message) == 'samsung':
+            sub = select(func.max(sellers.c.time_)
+                         .filter(and_(sellers.c.brand == 'Samsung'),
+                                 (sellers.c.product_type.in_(['Планшет', 'Умные часы'])))).scalar_subquery()
             stmt = (select(sellers)
                     .filter(and_(sellers.c.brand == 'Samsung'),
-                            (func.DATE(sellers.c.time_) >= datetime.now() - timedelta(3)))
-                    .order_by(sellers.c.price_2))
+                            (sellers.c.time_ >= sub))
+                    .order_by(sellers.c.product_type, sellers.c.price_2))
 
         if cfg_order_category_.get(message) == 'android':
             stmt = (select(sellers)
