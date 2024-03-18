@@ -158,7 +158,7 @@ async def price_list_formation(message: str) -> str:
 
         if cfg_order_category_.get(message) == 'xiaomi':
             stmt = (select(sellers)
-                    .filter(and_(sellers.c.product_type.not_in(['Смартфон', 'Планшет'])),
+                    .filter(and_(sellers.c.product_type.not_in(['Смартфон', 'Планшет', 'Телевизор'])),
                             (sellers.c.brand.in_(['Xiaomi', 'HOCO'])),
                             (func.DATE(sellers.c.time_) >= datetime.now() - timedelta(5)))
                     .order_by(sellers.c.product_type, sellers.c.price_2))
