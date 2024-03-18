@@ -68,13 +68,16 @@ async def get_order_list(m: Message):
         await m.answer('Главное меню:', reply_markup=main_menu_kb)
     else:
         text = await price_list_formation(m.text)
-        if len(text) > 4096:
+        if text == 'На данный момент нет хороших предложений в этой категории товаров':
+            await m.answer(text)
+        elif len(text) > 4096:
             for i in range(0, len(text), 4096):
                 part_mess = text[i: i + 4096]
                 await m.answer(part_mess)
+            await m.answer('Для заказа жми на кнопку', reply_markup=choose_order.as_markup())
         else:
             await m.answer(text)
-        await m.answer('Для заказа жми на кнопку', reply_markup=choose_order.as_markup())
+            await m.answer('Для заказа жми на кнопку', reply_markup=choose_order.as_markup())
 
 
 async def register_user_handlers():

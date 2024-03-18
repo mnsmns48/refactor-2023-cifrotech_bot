@@ -137,19 +137,23 @@ async def price_list_formation(message: str) -> str:
                 .order_by(sellers.c.name, sellers.c.price_2)
 
         if cfg_order_category_.get(message) == 'samsung':
-            sub = select(func.max(sellers.c.time_)
-                         .filter(and_(sellers.c.brand == 'Samsung'),
-                                 (sellers.c.product_type.in_(['Планшет', 'Умные часы'])))).scalar_subquery()
+            # sub = select(func.max(sellers.c.time_)
+            #              .filter(and_(sellers.c.brand == 'Samsung'),
+            #                      (sellers.c.product_type.in_(['Планшет', 'Умные часы'])))).scalar_subquery()
+            # stmt = (select(sellers)
+            #         .filter(and_(sellers.c.brand == 'Samsung'),
+            #                 (sellers.c.time_ >= sub))
+            #         .order_by(sellers.c.product_type, sellers.c.price_2))
             stmt = (select(sellers)
                     .filter(and_(sellers.c.brand == 'Samsung'),
-                            (sellers.c.time_ >= sub))
-                    .order_by(sellers.c.product_type, sellers.c.price_2))
+                            (func.DATE(sellers.c.time_) >= datetime.now() - timedelta(5)))
+                    .order_by(sellers.c.price_2))
 
         if cfg_order_category_.get(message) == 'android':
             stmt = (select(sellers)
                     .filter(and_(sellers.c.product_type == 'Смартфон'),
                             (sellers.c.brand.not_in(['Samsung', 'Apple'])),
-                            (func.DATE(sellers.c.time_) >= datetime.now() - timedelta(3)))
+                            (func.DATE(sellers.c.time_) >= datetime.now() - timedelta(5)))
                     .order_by(sellers.c.price_2))
 
         if cfg_order_category_.get(message) == 'xiaomi':
@@ -162,20 +166,23 @@ async def price_list_formation(message: str) -> str:
         if cfg_order_category_.get(message) == 'audio':
             stmt = (select(sellers)
                     .filter(and_(sellers.c.product_type == 'Аудиотовар'),
-                            (func.DATE(sellers.c.time_) >= datetime.now() - timedelta(8)))
+                            (func.DATE(sellers.c.time_) >= datetime.now() - timedelta(10)))
                     .order_by(sellers.c.brand, sellers.c.price_2))
 
         if cfg_order_category_.get(message) == 'tv':
             stmt = (select(sellers)
                     .filter(and_(sellers.c.product_type.in_
                                  (['Телевизор', 'Игровая приставка', 'Смарт приставки'])),
-                            (func.DATE(sellers.c.time_) >= datetime.now() - timedelta(6)))
+                            (func.DATE(sellers.c.time_) >= datetime.now() - timedelta(10)))
                     .order_by(sellers.c.name, sellers.c.price_2))
 
         async with AsyncScopedSessionPG() as session:
             response = await session.execute(stmt)
         result = response.fetchall()
-        for line in result:
-            output_str = output_str + ''.join(f"✷ {line.name} ➛ {line.price_2} ₽\n")
+        if result:
+            for line in result:
+                output_str = output_str + ''.join(f"✷ {line.name} ➛ {line.price_2} ₽\n")
+        else:
+            output_str = 'На данный момент нет хороших предложений в этой категории товаров'
 
     return output_str
